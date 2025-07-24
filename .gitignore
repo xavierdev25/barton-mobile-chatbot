@@ -23,9 +23,6 @@ Thumbs.db
 *.log
 *.tmp
 
-# Archivos de datos y resultados
-*.csv
-
 # Archivos de Excel
 *.xlsx
 
