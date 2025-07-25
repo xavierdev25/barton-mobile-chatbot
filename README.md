@@ -79,7 +79,7 @@ Pagos pendientes:
 - Pensiones (2)
 
 Detalle de pagos:
-  Matrícula: 350 soles
+  Matrícula: 300 soles
   Pensiones: 2 x 150 soles = 300 soles
 
 TOTAL A PAGAR: 650 soles

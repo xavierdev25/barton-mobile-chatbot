@@ -31,8 +31,8 @@ def pagos():
     total = 0
     if 'Matrícula pendiente' in alumno and alumno.get('Matrícula pendiente', '').strip().lower() == 'sí':
         pagos.append('Matrícula')
-        detalle.append('Matrícula: 350 soles')
-        total += 350
+        detalle.append('Matrícula: 300 soles')
+        total += 300
     pensiones_pendientes = 0
     if 'Pensiones pendientes' in alumno:
         try:
