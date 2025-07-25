@@ -88,29 +88,37 @@ def responder_pregunta(pregunta, alumnos):
     palabras_sueltas = {'matricula','pension','pensiones','deuda','codigo','código'}
     if pregunta_limpia.strip() in palabras_sueltas:
         return None
-    # Pregunta por código
-    if 'código' in pregunta_limpia or 'codigo' in pregunta_limpia:
-        resultado = extraer_nombre_de_pregunta(pregunta, alumnos)
-        if isinstance(resultado, list):
-            lista = '\n'.join([f"- {a.get('APELLIDOS Y NOMBRES','Desconocido')} (código: {a.get('Código modular (SIAGE)') or a.get('codigo modular (SIAGE)','Desconocido')})" for a in resultado])
-            return f"He encontrado varios alumnos con ese nombre. Por favor, indique el código modular (SIAGE) para continuar.\nCoincidencias:\n{lista}"
-        elif resultado:
-            cod = resultado.get('Código modular (SIAGE)') or resultado.get('codigo modular (SIAGE)')
-            nombre = resultado.get('APELLIDOS Y NOMBRES', 'Desconocido')
-            return f"El código de {nombre} es {cod}."
+
+    # Buscar por código modular directamente en la pregunta
+    codigos_encontrados = re.findall(r'\b\d{8,14}\b', pregunta)
+    if codigos_encontrados:
+        respuestas = []
+        for cod in codigos_encontrados:
+            alumno = buscar_por_codigo(alumnos, cod)
+            if alumno:
+                respuestas.append(f"Estudiante: {alumno.get('APELLIDOS Y NOMBRES', 'Desconocido')}\nCódigo: {cod}\nGrado: {alumno.get('Grado', 'Desconocido')}")
+        if respuestas:
+            return '\n\n'.join(respuestas)
         else:
-            return "No encontré ese alumno."
-    # Pregunta por pensión o matrícula
-    elif 'pensión' in pregunta_limpia or 'matrícula' in pregunta_limpia or 'pension' in pregunta_limpia or 'matricula' in pregunta_limpia:
-        resultado = extraer_nombre_de_pregunta(pregunta, alumnos)
-        if isinstance(resultado, list):
-            lista = '\n'.join([f"- {a.get('APELLIDOS Y NOMBRES','Desconocido')} (código: {a.get('Código modular (SIAGE)') or a.get('codigo modular (SIAGE)','Desconocido')})" for a in resultado])
-            return f"He encontrado varios alumnos con ese nombre. Por favor, indique el código modular (SIAGE) para continuar.\nCoincidencias:\n{lista}"
-        elif resultado:
-            return "Por favor, introduzca su código en la sección de pagos para ver el detalle de su deuda."
-        else:
-            return "No encontré ese alumno."
+            return "No se encontró ningún estudiante con ese código."
+
+    # Buscar por nombre en la pregunta
+    resultado = extraer_nombre_de_pregunta(pregunta, alumnos)
+    if isinstance(resultado, list):
+        lista = '\n'.join([
+            f"- {a.get('APELLIDOS Y NOMBRES','Desconocido')} (código: {a.get('Código modular (SIAGE)') or a.get('codigo modular (SIAGE)','Desconocido')}, grado: {a.get('Grado','Desconocido')})"
+            for a in resultado
+        ])
+        return f"He encontrado varios estudiantes con ese nombre. Por favor, indique el código modular (SIAGE) para mayor precisión.\nCoincidencias:\n{lista}"
+    elif resultado:
+        cod = resultado.get('Código modular (SIAGE)') or resultado.get('codigo modular (SIAGE)')
+        nombre = resultado.get('APELLIDOS Y NOMBRES', 'Desconocido')
+        grado = resultado.get('Grado', 'Desconocido')
+        return f"Estudiante: {nombre}\nCódigo: {cod}\nGrado: {grado}"
     else:
+        # Si la pregunta contiene palabras clave pero no se encontró coincidencia
+        if any(palabra in pregunta_limpia for palabra in ['codigo','código','nombre','alumno','estudiante']):
+            return "No se encontró ningún estudiante que coincida con la información proporcionada. Por favor, revise el nombre o código."
         return None
 
 def main():
