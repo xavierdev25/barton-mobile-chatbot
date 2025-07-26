@@ -3,6 +3,7 @@ import os
 import re
 from difflib import get_close_matches
 import unicodedata
+from datetime import datetime
 
 ARCHIVOS_GRADOS = [
     'lista primaria 1ro y 2do.xlsx - 1er grado.csv',
@@ -83,7 +84,41 @@ def extraer_nombre_de_pregunta(pregunta, alumnos):
                 return resultado
     return None
 
+def detectar_saludo(pregunta):
+    """
+    Detecta si la pregunta contiene un saludo y retorna una respuesta apropiada.
+    """
+    pregunta_lower = pregunta.lower().strip()
+    
+    # Lista de saludos comunes
+    saludos = [
+        'hola', 'buenos días', 'buenas tardes', 'buenas noches', 
+        'buen día', 'buena tarde', 'buena noche', 'saludos',
+        'qué tal', 'que tal', 'cómo estás', 'como estas',
+        'buen día', 'buena tarde', 'buena noche'
+    ]
+    
+    # Verificar si la pregunta contiene algún saludo
+    for saludo in saludos:
+        if saludo in pregunta_lower:
+            # Obtener la hora actual para personalizar el saludo
+            hora_actual = datetime.now().hour
+            
+            if 5 <= hora_actual < 12:
+                return "¡Buenos días! Soy el asistente virtual del Colegio Barton. ¿En qué puedo ayudarte? Puedes preguntarme sobre matrículas, pensiones o códigos de alumnos."
+            elif 12 <= hora_actual < 18:
+                return "¡Buenas tardes! Soy el asistente virtual del Colegio Barton. ¿En qué puedo ayudarte? Puedes preguntarme sobre matrículas, pensiones o códigos de alumnos."
+            else:
+                return "¡Buenas noches! Soy el asistente virtual del Colegio Barton. ¿En qué puedo ayudarte? Puedes preguntarme sobre matrículas, pensiones o códigos de alumnos."
+    
+    return None
+
 def responder_pregunta(pregunta, alumnos):
+    # Primero verificar si es un saludo
+    respuesta_saludo = detectar_saludo(pregunta)
+    if respuesta_saludo:
+        return respuesta_saludo
+    
     pregunta_limpia = normalizar(pregunta)
     palabras_sueltas = {'matricula','pension','pensiones','deuda','codigo','código'}
     if pregunta_limpia.strip() in palabras_sueltas:
