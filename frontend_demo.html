@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chatbot Inteligente - I.E.P. Barton</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .chat-container {
+        width: 90%;
+        max-width: 600px;
+        height: 80vh;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .chat-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        text-align: center;
+      }
+
+      .chat-header h1 {
+        font-size: 1.5rem;
+        margin-bottom: 5px;
+      }
+
+      .chat-header p {
+        opacity: 0.9;
+        font-size: 0.9rem;
+      }
+
+      .chat-messages {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        background: #f8f9fa;
+      }
+
+      .message {
+        margin-bottom: 15px;
+        display: flex;
+        align-items: flex-start;
+      }
+
+      .message.user {
+        justify-content: flex-end;
+      }
+
+      .message-content {
+        max-width: 70%;
+        padding: 12px 16px;
+        border-radius: 18px;
+        word-wrap: break-word;
+      }
+
+      .message.bot .message-content {
+        background: white;
+        color: #333;
+        border: 1px solid #e0e0e0;
+      }
+
+      .message.user .message-content {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .options-container {
+        margin-top: 10px;
+      }
+
+      .option-button {
+        display: block;
+        width: 100%;
+        padding: 10px 15px;
+        margin: 5px 0;
+        background: white;
+        border: 2px solid #667eea;
+        border-radius: 10px;
+        color: #667eea;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+      }
+
+      .option-button:hover {
+        background: #667eea;
+        color: white;
+        transform: translateY(-2px);
+      }
+
+      .chat-input {
+        padding: 20px;
+        background: white;
+        border-top: 1px solid #e0e0e0;
+      }
+
+      .input-container {
+        display: flex;
+        gap: 10px;
+      }
+
+      .message-input {
+        flex: 1;
+        padding: 12px 16px;
+        border: 2px solid #e0e0e0;
+        border-radius: 25px;
+        outline: none;
+        font-size: 0.9rem;
+        transition: border-color 0.3s ease;
+      }
+
+      .message-input:focus {
+        border-color: #667eea;
+      }
+
+      .send-button {
+        padding: 12px 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+      }
+
+      .send-button:hover {
+        transform: scale(1.05);
+      }
+
+      .file-upload {
+        margin-top: 10px;
+        text-align: center;
+      }
+
+      .file-input {
+        display: none;
+      }
+
+      .file-label {
+        display: inline-block;
+        padding: 10px 20px;
+        background: #28a745;
+        color: white;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      .file-label:hover {
+        background: #218838;
+      }
+
+      .typing-indicator {
+        display: none;
+        padding: 10px;
+        color: #666;
+        font-style: italic;
+      }
+
+      .typing-indicator.show {
+        display: block;
+      }
+
+      .status-indicator {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 10px 20px;
+        border-radius: 10px;
+        color: white;
+        font-weight: bold;
+      }
+
+      .status-connected {
+        background: #28a745;
+      }
+
+      .status-disconnected {
+        background: #dc3545;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="status-indicator" id="statusIndicator">Conectando...</div>
+
+    <div class="chat-container">
+      <div class="chat-header">
+        <h1>🤖 Asistente de Matrículas</h1>
+        <p>I.E.P. Barton - Chatbot Inteligente</p>
+      </div>
+
+      <div class="chat-messages" id="chatMessages">
+        <!-- Los mensajes se agregarán aquí dinámicamente -->
+      </div>
+
+      <div class="typing-indicator" id="typingIndicator">
+        El asistente está escribiendo...
+      </div>
+
+      <div class="chat-input">
+        <div class="input-container">
+          <input
+            type="text"
+            class="message-input"
+            id="messageInput"
+            placeholder="Escribe tu mensaje aquí..."
+          />
+          <button class="send-button" id="sendButton">Enviar</button>
+        </div>
+        <div class="file-upload" id="fileUpload" style="display: none">
+          <label for="fileInput" class="file-label">
+            📎 Subir Documentos
+          </label>
+          <input
+            type="file"
+            id="fileInput"
+            class="file-input"
+            multiple
+            accept="image/*,.pdf"
+          />
+        </div>
+      </div>
+    </div>
+
+    <script>
+      class ChatbotInterface {
+        constructor() {
+          this.apiUrl = "http://localhost:5001";
+          this.sessionId = null;
+          this.isConnected = false;
+
+          this.initializeElements();
+          this.bindEvents();
+          this.checkConnection();
+          this.addBotMessage(
+            "¡Hola! Soy el Asistente de Matrículas del I.E.P. Barton. ¿En qué puedo ayudarte hoy?"
+          );
+        }
+
+        initializeElements() {
+          this.chatMessages = document.getElementById("chatMessages");
+          this.messageInput = document.getElementById("messageInput");
+          this.sendButton = document.getElementById("sendButton");
+          this.fileUpload = document.getElementById("fileUpload");
+          this.fileInput = document.getElementById("fileInput");
+          this.typingIndicator = document.getElementById("typingIndicator");
+          this.statusIndicator = document.getElementById("statusIndicator");
+        }
+
+        bindEvents() {
+          this.sendButton.addEventListener("click", () => this.sendMessage());
+          this.messageInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") this.sendMessage();
+          });
+          this.fileInput.addEventListener("change", (e) =>
+            this.handleFileUpload(e)
+          );
+        }
+
+        async checkConnection() {
+          try {
+            const response = await fetch(`${this.apiUrl}/health`);
+            if (response.ok) {
+              this.isConnected = true;
+              this.updateStatus("Conectado", "status-connected");
+            } else {
+              this.updateStatus("Desconectado", "status-disconnected");
+            }
+          } catch (error) {
+            this.updateStatus("Error de conexión", "status-disconnected");
+          }
+        }
+
+        updateStatus(message, className) {
+          this.statusIndicator.textContent = message;
+          this.statusIndicator.className = `status-indicator ${className}`;
+        }
+
+        addMessage(content, isUser = false) {
+          const messageDiv = document.createElement("div");
+          messageDiv.className = `message ${isUser ? "user" : "bot"}`;
+
+          const messageContent = document.createElement("div");
+          messageContent.className = "message-content";
+          messageContent.textContent = content;
+
+          messageDiv.appendChild(messageContent);
+          this.chatMessages.appendChild(messageDiv);
+          this.scrollToBottom();
+        }
+
+        addBotMessage(content, options = null) {
+          this.addMessage(content, false);
+
+          if (options && options.length > 0) {
+            this.showOptions(options);
+          }
+        }
+
+        showOptions(options) {
+          const optionsContainer = document.createElement("div");
+          optionsContainer.className = "options-container";
+
+          options.forEach((option) => {
+            const button = document.createElement("button");
+            button.className = "option-button";
+            button.textContent = option.texto;
+            button.onclick = () => this.sendMessage(option.texto);
+            optionsContainer.appendChild(button);
+          });
+
+          this.chatMessages.appendChild(optionsContainer);
+          this.scrollToBottom();
+        }
+
+        showFileUpload() {
+          this.fileUpload.style.display = "block";
+        }
+
+        hideFileUpload() {
+          this.fileUpload.style.display = "none";
+        }
+
+        showTyping() {
+          this.typingIndicator.classList.add("show");
+        }
+
+        hideTyping() {
+          this.typingIndicator.classList.remove("show");
+        }
+
+        scrollToBottom() {
+          this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+        }
+
+        async sendMessage(message = null) {
+          const messageText = message || this.messageInput.value.trim();
+          if (!messageText) return;
+
+          // Agregar mensaje del usuario
+          this.addMessage(messageText, true);
+          this.messageInput.value = "";
+
+          // Mostrar indicador de escritura
+          this.showTyping();
+
+          try {
+            const response = await fetch(`${this.apiUrl}/chatbot-inteligente`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                mensaje: messageText,
+                session_id: this.sessionId,
+              }),
+            });
+
+            const data = await response.json();
+            this.sessionId = data.session_id;
+
+            // Ocultar indicador de escritura
+            this.hideTyping();
+
+            // Procesar respuesta
+            this.processResponse(data);
+          } catch (error) {
+            this.hideTyping();
+            this.addBotMessage(
+              "Lo siento, hubo un error de conexión. Por favor, intenta de nuevo."
+            );
+            console.error("Error:", error);
+          }
+        }
+
+        processResponse(data) {
+          switch (data.tipo) {
+            case "opciones":
+              this.addBotMessage(data.mensaje, data.opciones);
+              this.hideFileUpload();
+              break;
+            case "texto":
+              this.addBotMessage(data.mensaje);
+              this.hideFileUpload();
+              break;
+            case "subida_archivos":
+              this.addBotMessage(data.mensaje);
+              this.showFileUpload();
+              break;
+            default:
+              this.addBotMessage(data.mensaje);
+              this.hideFileUpload();
+          }
+        }
+
+        async handleFileUpload(event) {
+          const files = event.target.files;
+          if (!files.length) return;
+
+          this.showTyping();
+
+          try {
+            const archivos = [];
+            for (let file of files) {
+              const base64 = await this.fileToBase64(file);
+              archivos.push({
+                nombre: file.name,
+                tipo: this.getFileType(file.name),
+                contenido: base64,
+              });
+            }
+
+            const response = await fetch(`${this.apiUrl}/chatbot-inteligente`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                archivos: archivos,
+                session_id: this.sessionId,
+              }),
+            });
+
+            const data = await response.json();
+            this.sessionId = data.session_id;
+
+            this.hideTyping();
+            this.processResponse(data);
+            this.hideFileUpload();
+          } catch (error) {
+            this.hideTyping();
+            this.addBotMessage(
+              "Error al subir los archivos. Por favor, intenta de nuevo."
+            );
+            console.error("Error:", error);
+          }
+
+          // Limpiar input de archivos
+          event.target.value = "";
+        }
+
+        fileToBase64(file) {
+          return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+              const base64 = reader.result.split(",")[1];
+              resolve(base64);
+            };
+            reader.onerror = (error) => reject(error);
+          });
+        }
+
+        getFileType(filename) {
+          const ext = filename.split(".").pop().toLowerCase();
+          const imageExts = ["jpg", "jpeg", "png", "gif", "bmp"];
+          const pdfExts = ["pdf"];
+
+          if (imageExts.includes(ext)) return "imagen";
+          if (pdfExts.includes(ext)) return "pdf";
+          return "documento";
+        }
+      }
+
+      // Inicializar la interfaz cuando se carga la página
+      document.addEventListener("DOMContentLoaded", () => {
+        new ChatbotInterface();
+      });
+    </script>
+  </body>
+</html>
