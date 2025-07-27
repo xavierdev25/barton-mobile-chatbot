@@ -9,8 +9,8 @@ class Config:
     
     # Configuración del servidor
     HOST = "0.0.0.0"
-    PORT = 5001
-    DEBUG = True
+    PORT = int(os.environ.get('PORT', 5001))  # Usar variable de entorno PORT de Render
+    DEBUG = False  # Cambiar a False para producción
     
     # Configuración de archivos
     UPLOAD_FOLDER = "documentos"
@@ -55,13 +55,15 @@ class Config:
         "agradecimiento_paciencia": "¡Muchas gracias por tu paciencia! 🙏 Esperamos verte pronto en el I.E.P. Barton. Si tienes alguna otra consulta, no dudes en preguntarme."
     }
     
-    # Configuración de CORS
+    # Configuración de CORS - Agregar el dominio de Render
     CORS_ORIGINS = [
         "http://localhost:3000",
         "http://localhost:8081",
         "http://localhost:19006",
         "exp://localhost:19000",
-        "exp://192.168.1.100:19000"
+        "exp://192.168.1.100:19000",
+        "https://barton-mobile-chatbot.onrender.com",
+        "*"  # Permitir todos los orígenes para desarrollo
     ]
     
     @classmethod
