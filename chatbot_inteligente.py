@@ -624,7 +624,7 @@ class ChatbotInteligente:
             }
         elif "costos" in mensaje_lower or "precio" in mensaje_lower or "4" in mensaje:
             return {
-                "mensaje": f"💰 Los costos de matrícula para el 2024 son:\n\n• Matrícula: S/ {costos['matricula']}\n• Pensión mensual: S/ {costos['pension_mensual']}\n\n¿Te gustaría proceder con la matrícula o tienes alguna pregunta sobre los costos?",
+                "mensaje": f"💰 Los costos de matrícula para el 2025 son:\n\n• Matrícula: S/ {costos['matricula']}\n• Pensión mensual: S/ {costos['pension_mensual']}\n\n¿Te gustaría proceder con la matrícula o tienes alguna pregunta sobre los costos?",
                 "opciones": [
                     {"texto": "📋 Ver requisitos", "valor": "requisitos"},
                     {"texto": "📤 Subir documentos", "valor": "subir_documentos"},
@@ -1025,7 +1025,7 @@ class ChatbotInteligente:
         elif "costos" in mensaje_lower or "precio" in mensaje_lower or "2" in mensaje:
             costos = Config.get_costos()
             return {
-                "mensaje": f"💰 Los costos de matrícula para el 2024 son:\n\n• Matrícula: S/ {costos['matricula']}\n• Pensión mensual: S/ {costos['pension_mensual']}\n\n¿Te gustaría proceder con la matrícula o tienes alguna pregunta sobre los costos?",
+                "mensaje": f"💰 Los costos de matrícula para el 2025 son:\n\n• Matrícula: S/ {costos['matricula']}\n• Pensión mensual: S/ {costos['pension_mensual']}\n\n¿Te gustaría proceder con la matrícula o tienes alguna pregunta sobre los costos?",
                 "opciones": [
                     {"texto": "📋 Ver requisitos", "valor": "requisitos"},
                     {"texto": "👨‍💼 Hablar con asesor", "valor": "asesor"},
@@ -1104,7 +1104,7 @@ class ChatbotInteligente:
         # Consultar costos de matrícula
         if "costos" in mensaje_lower or "precio" in mensaje_lower or "pago" in mensaje_lower:
             return {
-                "mensaje": f"💰 Costos de matrícula para el 2024:\n\n" +
+                "mensaje": f"💰 Costos de matrícula para el 2025:\n\n" +
                           f"• Matrícula: S/ {costos['matricula']}\n" +
                           f"• Pensión mensual: S/ {costos['pension_mensual']}\n"
                           "\n\n" +
@@ -1125,8 +1125,8 @@ class ChatbotInteligente:
         # Información del calendario escolar
         elif "calendario" in mensaje_lower or "horarios" in mensaje_lower or "fechas" in mensaje_lower:
             return {
-                "mensaje": f"📅 Calendario Escolar 2024 - I.E.P. Barton\n\n" +
-                          f"📚 Inicio de clases: 1 de marzo de 2024\n" +
+                "mensaje": f"📅 Calendario Escolar 2025 - I.E.P. Barton\n\n" +
+                          f"📚 Inicio de clases: 1 de marzo de 2025\n" +
                           f"🏫 Horario de clases: 8:00 AM - 2:00 PM\n" +
                           f"🍽️ Recreo: 10:30 AM - 11:00 AM\n\n" +
                           f"📆 Fechas importantes:\n" +
