@@ -843,8 +843,7 @@ class ChatbotInteligente:
                 "mensaje": f"🎉 ¡FELICITACIONES! Tu matrícula para {grado_seleccionado} ha sido APROBADA exitosamente.\n\n" +
                           f"✅ Documentos recibidos: {len(documentos_guardados)} archivo(s)\n\n" +
                           f"📋 Próximos pasos:\n" +
-                          f"• Recibirás un correo de confirmación en las próximas 24 horas\n" +
-                          f"• Tu matrícula será procesada en 2-3 días hábiles\n" +
+                          f"• Recibirás un correo de confirmación en las próximas 3 horas\n" +
                           f"• Te contactaremos para coordinar el pago de la matrícula\n\n" +
                           f"🏫 Bienvenido al I.E.P. Barton! 🎓\n\n" +
                           f"¿Hay algo más en lo que pueda ayudarte?",
